@@ -1,5 +1,7 @@
 const database = require("../../database");
 
+afterAll(() => database.end());
+
 const getMovies = (req, res) => {
   database
     .query("select * from movies")
