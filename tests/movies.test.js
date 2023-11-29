@@ -67,7 +67,6 @@ describe("POST /api/movies", () => {
     expect(movieInDatabase.year).toStrictEqual(newMovie.year);
     expect(movieInDatabase.color).toStrictEqual(newMovie.color);
     expect(movieInDatabase.duration).toStrictEqual(newMovie.duration);
-
   });
 
   it("should return an error", async () => {
@@ -79,7 +78,6 @@ describe("POST /api/movies", () => {
 
     expect(response.status).toEqual(422);
   });
-
 });
 
 describe("PUT /api/movies/:id", () => {
@@ -94,7 +92,13 @@ describe("PUT /api/movies/:id", () => {
 
     const [result] = await database.query(
       "INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)",
-      [newMovie.title, newMovie.director, newMovie.year, newMovie.color, newMovie.duration]
+      [
+        newMovie.title,
+        newMovie.director,
+        newMovie.year,
+        newMovie.color,
+        newMovie.duration,
+      ]
     );
 
     const id = result.insertId;
@@ -113,7 +117,10 @@ describe("PUT /api/movies/:id", () => {
 
     expect(response.status).toEqual(204);
 
-    const [movies] = await database.query("SELECT * FROM movies WHERE id=?", id);
+    const [movies] = await database.query(
+      "SELECT * FROM movies WHERE id=?",
+      id
+    );
 
     const [movieInDatabase] = movies;
 
@@ -156,6 +163,42 @@ describe("PUT /api/movies/:id", () => {
 
     const response = await request(app).put("/api/movies/0").send(newMovie);
 
+    expect(response.status).toEqual(404);
+  });
+});
+
+
+describe("DELETE /api/movies/:id", () => {
+  it("should delete movie", async () => {
+    const newMovie = {
+      title: "Titanic",
+      director: "James Cameron",
+      year: "1997",
+      color: "1",
+      duration: 182,
+    };
+
+    const [result] = await database.query(
+      "INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)",
+      [
+        newMovie.title,
+        newMovie.director,
+        newMovie.year,
+        newMovie.color,
+        newMovie.duration,
+      ]
+    );
+
+    const id = result.insertId;
+
+     const response = await request(app)
+      .delete(`/api/movies/${id}`);
+    expect(response.status).toEqual(204);
+  });
+
+  it("should return not found", async () => {
+    const response = await request(app)
+      .delete(`/api/movies/0`)
     expect(response.status).toEqual(404);
   });
 });
