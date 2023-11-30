@@ -14,8 +14,6 @@ app.get("/api/users", userControllers.getUsers);
 
 app.get("/api/movies/:id", movieControllers.getMovieById);
 app.get("/api/users/:id", userControllers.getUserById);
-app.post("/api/movies", movieControllers.postMovies);
-app.post("/api/users", userControllers.postUsers);
 app.put("/api/movies/:id", validateMovie, movieControllers.updateMovies);
 app.put("/api/users/:id", validateUser, userControllers.updateUsers);
 
